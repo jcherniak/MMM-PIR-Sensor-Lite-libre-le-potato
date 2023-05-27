@@ -2,7 +2,8 @@
 #-- coding: utf-8 --
 
 # Import necessary libraries
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
+import gpiod
 import time, argparse
 
 # Initialize variables
@@ -18,9 +19,13 @@ args = parser.parse_args()
 pin = args.pin
 
 # Configure GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(pin, GPIO.IN)
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setwarnings(False)
+#GPIO.setup(pin, GPIO.IN)
+
+chip = gpiod.Chip('1')
+lines = chip.get_lines([pin])
+lines.request(consumer='?', type=gpiod.LINE_REQ_DIR_IN)
 
 # Indicate PIR sensor start
 print("PIR_START")
@@ -31,12 +36,11 @@ try:
 	
 	# Infinite loop
 	while True:
-		if GPIO.input(pin):
+		if lines.get_values()[0]:
 			print("USER_PRESENCE")
 			time.sleep(5) # Delay to avoid multiple detections (5 seconds)
 
-		time.sleep(1) # Loop delay (1 second)
-
+		time.sleep(0.1) # Loop delay (1 second)
 
 finally:
-	GPIO.cleanup()
+    chip.close()
