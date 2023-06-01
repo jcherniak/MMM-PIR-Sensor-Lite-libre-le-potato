@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #-- coding: utf-8 --
 
 # Import necessary libraries
@@ -23,7 +23,7 @@ pin = args.pin
 #GPIO.setwarnings(False)
 #GPIO.setup(pin, GPIO.IN)
 
-chip = gpiod.Chip('1')
+chip = gpiod.Chip('0')
 lines = chip.get_lines([pin])
 lines.request(consumer='?', type=gpiod.LINE_REQ_DIR_IN)
 
